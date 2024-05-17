@@ -4,10 +4,45 @@
     <meta charset="utf-8">
     <title>Visualização 360</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <style>
+        #loader {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+    <div id="loader">Carregando...</div>
     <a-scene>
-        <a-sky src="teste.JPG" rotation="0 -130 0"></a-sky>
+        <a-assets>
+            <!-- Placeholder enquanto a imagem principal não carrega -->
+            <img id="low-res" src="placeholder.jpg" alt="Baixa Resolução">
+            <!-- Imagem de alta resolução, marcada para ser carregada após a cena ser inicializada -->
+            <img id="high-res" src="teste.JPG" alt="Alta Resolução">
+        </a-assets>
+
+        <a-sky src="#low-res" rotation="0 -130 0"></a-sky>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const scene = document.querySelector('a-scene');
+                if (scene.hasLoaded) {
+                    loadHighResImage();
+                } else {
+                    scene.addEventListener('loaded', loadHighResImage);
+                }
+
+                function loadHighResImage() {
+                    // Após a cena ser carregada, substituímos a imagem de baixa por alta resolução
+                    document.querySelector('a-sky').setAttribute('src', '#high-res');
+                    document.getElementById('loader').style.display = 'none'; // Esconder o loader
+                }
+            });
+        </script>
     </a-scene>
 </body>
 </html>
